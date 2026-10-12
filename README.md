@@ -72,4 +72,4 @@ I build what leadership wants to see, from the data they already have.
 
 ---
 
-All rights reserved © 2026 Jasmine Rodriguez. Happy to walk through the approach in interviews.
+All rights reserved © 2026 Jasmine Rodriguez.
