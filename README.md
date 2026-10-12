@@ -1,72 +1,67 @@
-# ReportBot Blueprint
+# AI Automation Assistant Blueprint
 
-**A case study: turning an organization's existing documentation into a governed, queryable AI knowledge bot.**
+**A case study: an AI assistant that walks users step by step through configuring automated workflows, custom groupings, metrics and scheduled reports, grounded in the documentation an organization already has.**
 
-> Result: **doubled analyst delivery capacity with no added headcount.**
+**How it works:** When a user said "I can't find a way to get this report" or "how do I automate this," the assistant replied with exactly how to do it using the platform's existing functionality, drawn from real expert use cases.
 
-This repository is a showcase of the method behind ReportBot. It describes the problem, the approach, the architecture, the guardrails and the results. It does not include source code, prompts, templates or any employer material. All examples are generic.
+> Result: **doubled analyst delivery capacity with no added headcount**, with fewer escalations and faster self-service.
+
+This repository is a showcase of the method behind this assistant. It covers the problem, the approach, the architecture, the guardrails and the results. It does not include source code, prompts, templates or any employer material. All examples are generic.
 
 ## The problem
 
-Analyst teams that produce executive and customer reports spend most of their time hunting for answers, not writing them. The knowledge exists, but it is spread across help articles, PDFs, internal research, past write-ups and the heads of a few senior people. Every new analyst repeats the same search, every report takes longer than it should, and quality depends on who happens to be on shift.
+Users and analysts could not configure automated workflows, scheduled reports, custom groupings or metrics on their own. Each setup needed someone who knew the platform deeply: which data to use, how to segment an audience, which metric answered the question leadership was asking, and how to schedule the result so it arrived without anyone touching it.
 
-Hiring more analysts was not an option. The question was whether the documentation the organization already had could do more of the work.
+The documentation existed, but it was spread across help pages, PDFs, research and the heads of a few experts. So every non-trivial setup became an escalation. Experts became the bottleneck, analysts waited, and report quality depended on who was available that day.
 
 ## The approach
 
-ReportBot is a knowledge bot built on a notebook-style LLM workspace (for example NotebookLM or Gemini). It answers only from a curated set of sources, cites where each answer came from, and is tuned for the questions analysts actually ask while building reports.
+The assistant is grounded in the organization's existing documentation and a library of worked use cases. Instead of just answering questions, it guides users through configuration step by step.
 
-The method has five parts:
-
-1. **Curate the sources, don't dump them.** Sources are organized into a clear taxonomy so the model can ground answers in the right material:
-   - Knowledge links: official help and reference pages
-   - PDFs: guides, product sheets and policy documents
-   - Research: industry reports and benchmarks used to frame findings
-   - Generated notes: summaries the team writes to fill gaps the docs leave open
-   - Use-case write-ups: worked examples of real report requests and how they were answered
-   - Welcome notes: orientation for new users on what the bot can and cannot do
-   - Custom settings: the bot's role, tone, scope and answer format
-2. **Give the bot a clear job.** A role definition sets who it serves, what it answers, how it cites, and when it must say "I don't know" instead of guessing.
-3. **Pin the answers that matter most.** The questions analysts ask every week are answered once, reviewed by a senior person, and pinned so the bot returns the approved answer every time.
-4. **Govern it like a system, not a toy.** Owners, review cycles, source rules and data handling are defined before launch, not after.
-5. **Measure the outcome.** Track reports delivered per analyst, time to first draft and the share of answers needing correction.
+1. **Walk users through the setup, not just the theory.** For a given goal, the assistant explains which workflow to build, how to define custom audience groupings and segmentation rules, which metrics to track, and how to schedule the automated report.
+2. **Ground every answer in curated sources.** Sources are organized into a clear taxonomy: reference documentation, guides and PDFs, research and benchmarks, team-written notes that fill documentation gaps, worked use cases from real requests, orientation notes for new users, and the assistant's own role and scope settings.
+3. **Cite where each answer came from.** Users can check the source before they act on it.
+4. **Pin the answers that matter most.** The setups people ask about every week are answered once, reviewed by an expert, and pinned so the assistant gives the approved answer every time.
+5. **Say "I don't know" instead of guessing.** When the sources do not cover a question, the assistant says so and routes it to a person.
+6. **Measure the outcome.** Track delivery per analyst, escalation volume and time from request to a working automated report.
 
 ## Architecture
 
 ```
-  Existing documentation                  Notebook LLM workspace               Analysts
- ┌────────────────────────┐            ┌──────────────────────────┐        ┌─────────────┐
- │ Knowledge links        │            │ Role and scope settings  │        │ Ask a       │
- │ PDFs                   │  curated   │ Grounded retrieval       │ cited  │ question    │
- │ Research               │ ─────────► │ Pinned FAQ answers       │ ─────► │ Draft the   │
- │ Generated notes        │            │ "I don't know" fallback  │        │ report      │
- │ Use-case write-ups     │            └────────────┬─────────────┘        └──────┬──────┘
- └────────────────────────┘                         │                             │
-            ▲                                       │ gaps, corrections           │
-            └──────── owner review cycle ◄──────────┴─────────────────────────────┘
+  Existing knowledge                    AI automation assistant                 Users and analysts
+ ┌──────────────────────┐            ┌─────────────────────────────┐          ┌──────────────────────┐
+ │ Reference docs       │            │ Role and scope settings     │          │ "I need a monthly    │
+ │ Guides and PDFs      │  curated   │ Grounded retrieval + cites  │  step by │  report on X for Y"  │
+ │ Research             │ ─────────► │ Pinned, approved answers    │ ───────► │ Workflow, grouping,  │
+ │ Team notes           │            │ Step-by-step setup guidance │   step   │ metrics, schedule    │
+ │ Worked use cases     │            │ "I don't know" fallback     │          │ configured           │
+ └──────────────────────┘            └──────────────┬──────────────┘          └──────────┬───────────┘
+            ▲                                       │ gaps, corrections                  │
+            └──────────── expert review cycle ◄─────┴────────────────────────────────────┘
 ```
 
-Gaps and corrections flow back to a named owner, who updates the sources or pins a new approved answer. The bot improves because the documentation improves.
+Gaps and corrections flow back to a named owner, who updates the sources or pins a new approved answer. The assistant improves as the documentation improves.
 
 ## Guardrails
 
-- **Grounded answers only.** The bot answers from curated sources and cites them. No source, no answer.
-- **Human in the loop.** Analysts own every report. The bot drafts and finds; people review and decide.
+- **Grounded answers only.** The assistant answers from curated sources and cites them. No source, no answer.
+- **Human in the loop.** Users own every configuration and report. The assistant guides; people review and decide.
 - **No sensitive data in the workspace.** Customer data and credentials never go into sources.
 - **Named ownership.** Every source category has an owner and a review date. Stale sources are removed.
-- **Approved answers stay approved.** Pinned answers change only after review.
-- **Clear limits.** New users learn what the bot is for, and what it should not be used for, before their first question.
+- **Approved answers stay approved.** Pinned answers change only after expert review.
+- **Clear limits.** New users learn what the assistant is for, and what it is not for, before their first question.
 
 ## Results
 
 - **Doubled analyst delivery capacity with no added headcount**
-- Faster onboarding: new analysts got answers from day one instead of waiting on senior staff
-- More consistent reports, because the same approved answers were used across the team
+- **Fewer escalations:** routine setup questions were answered without pulling in an expert
+- **Faster self-service:** users configured workflows, groupings, metrics and scheduled reports on their own
+- More consistent reports, because the team used the same approved setups
 - Documentation gaps became visible and got fixed, instead of living in people's heads
 
 ## My role
 
-I identified the problem, designed the source taxonomy and governance model, built and tuned the bot, wrote the pinned answers with subject matter experts, rolled it out to the analyst team, and measured the results.
+I identified the problem, designed the source taxonomy, the guidance approach and the governance model, built and tuned the assistant, wrote the pinned answers with subject matter experts, rolled it out, and measured the results.
 
 ## About me
 
@@ -77,4 +72,4 @@ I build what leadership wants to see, from the data they already have.
 
 ---
 
-All rights reserved © 2026 Jasmine Rodriguez. Code available for review on request during interviews.
+All rights reserved © 2026 Jasmine Rodriguez. Happy to walk through the approach in interviews.
