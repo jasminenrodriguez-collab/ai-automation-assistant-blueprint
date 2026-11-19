@@ -4,7 +4,7 @@
 
 **How it works:** When a user said "I can't find a way to get this report" or "how do I automate this," the assistant replied with exactly how to do it using the platform's existing functionality, drawn from real expert use cases.
 
-> Result: **doubled analyst delivery capacity with no added headcount**, with fewer escalations and faster self-service.
+> Result: **increased analyst productivity 40% with no added headcount**, with fewer escalations and faster self-service.
 
 This repository is a showcase of the method behind this assistant. It covers the problem, the approach, the architecture, the guardrails and the results. It does not include source code, prompts, templates or any employer material. All examples are generic.
 
@@ -65,7 +65,7 @@ I identified the problem, designed the source taxonomy, the guidance approach an
 
 ## About me
 
-Security, GRC & Customer Success leader and AI automation builder. CISSP. 2 U.S. patents (1 pending).
+Security, GRC & Customer Success leader and AI automation builder. CISSP, CEH. 3 U.S. patents.
 I build what leadership wants to see, from the data they already have.
 
 [LinkedIn](https://www.linkedin.com/in/jasminerodriguez-security)
